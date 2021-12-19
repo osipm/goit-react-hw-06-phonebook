@@ -4,7 +4,7 @@ import { PropTypes } from 'prop-types';
 import { connect } from 'react-redux';
 import * as Contact from '../../redux/actions';
 
-function ContactForm({ onSubmit }) {
+function ContactForm({ contacts, onSubmit }) {
   const [name, setName] = useState('');
   const [number, setNumber] = useState('');
 
@@ -27,11 +27,15 @@ function ContactForm({ onSubmit }) {
         return;
     }
   };
-
   const handleSubmit = e => {
     e.preventDefault();
     const name = e.target.name.value;
     const number = e.target.number.value;
+
+    if (contacts.find(contact => contact.name === name)) {
+      alert(`${name} is already in the contacts`);
+      return contacts;
+    }
     onSubmit(name, number);
     reset();
   };
@@ -69,12 +73,23 @@ function ContactForm({ onSubmit }) {
   );
 }
 
-ContactForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
-};
+const mapStateToProps = state => ({
+  contacts: state.phone.contacts,
+});
 
 const mapDispatchToProps = dispatch => ({
   onSubmit: (name, number) => dispatch(Contact.addContact(name, number)),
 });
 
-export default connect(null, mapDispatchToProps)(ContactForm);
+export default connect(mapStateToProps, mapDispatchToProps)(ContactForm);
+
+ContactForm.propTypes = {
+  contacts: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+      number: PropTypes.string.isRequired,
+    }).isRequired,
+  ).isRequired,
+  onSubmit: PropTypes.func.isRequired,
+};

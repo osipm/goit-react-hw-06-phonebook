@@ -31,3 +31,8 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Filter);
+
+Filter.propTypes = {
+  filter: PropTypes.string.isRequired,
+  onHandleChange: PropTypes.func.isRequired,
+};
